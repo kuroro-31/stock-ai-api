@@ -1,3 +1,15 @@
+# 株価データの取得と分析：
+# a. Pythonで株価データを取得するためのライブラリ（pandas, yfinanceなど）をインストールします。
+# b. 毎営業日の15:30に自動実行するスケジュールを設定します（scheduleライブラリが役立ちます）。
+# c. 株価データを取得し、上昇率を計算します。
+# SBI証券での自動売買：
+# a. SBI証券APIを利用して株の売買を自動化します。APIの認証情報を取得して、Pythonプログラムに組み込みます。
+# b. 上昇率が最も高い銘柄を選択し、現物1株を次の営業日の9:00に自動で購入します。
+# 買った株価のモニタリングと売却条件：
+# a. 購入価格の+50円になったら売却するように条件を設定します。
+# b. 14:50になっても+50円に達しない場合は、その日のうちにプラスになる場合のみ売却します。
+# c. 購入価格よりマイナスの場合、次の営業日にプラスになったタイミングで売却します。
+
 import pandas_market_calendars as mcal
 import yfinance as yf
 import pandas_datareader.data as pdr
@@ -57,15 +69,19 @@ stocks = [
 
 # 営業日のデータを取得
 data = {}
+errors = []
 for symbol in stocks:
     try:
         stock_data = yf.download(symbol, start=schedule.iloc[0].name.date(), end=today)
         if not stock_data.empty:
             data[symbol] = stock_data
     except Exception as e:
-        print(f"Error fetching data for {symbol}: {e}")
+        errors.append((symbol, e))
         continue
 
+if errors:
+    for symbol, error in errors:
+        print(f"Error fetching data for {symbol}: {error}")
 # RSIを計算する関数
 # RSIは、一定期間の上昇幅と下落幅を比較して、過買いや過売りの状態を示す指標です。
 # RSIが70以上になると過買い状態を示し、30以下になると過売り状態を示すことが一般的です。
@@ -125,7 +141,36 @@ for symbol in stocks:
 # 上昇率が高い順に銘柄をソート
 rising_stocks = sorted(rising_stocks, key=lambda x: x[1], reverse=True)
 
-# 上昇が期待される銘柄と上昇率の上位10件を表示
-print("上昇が期待される銘柄と上昇率:")
-for i, stock in enumerate(rising_stocks[:10]):
-    print(f"{i+1}. {stock[0]}: {stock[1]:.2f}%")
+
+
+
+import schedule
+import time
+from datetime import datetime
+import pytz
+
+def is_weekday():
+    today = datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%A')
+    return today not in ['Saturday', 'Sunday']
+
+
+
+def print_rising_stocks():
+    rising_stocks = get_rising_stocks()
+    if rising_stocks:
+        print("上昇が期待される銘柄と上昇率:")
+        for i, stock in enumerate(rising_stocks[:10]):
+            print(f"{i+1}. {stock[0]}: {stock[1]:.2f}%")
+
+if __name__ == '__main__':
+    rising_stocks = get_rising_stocks()
+    print("上昇が期待される銘柄と上昇率:")
+    for i, stock in enumerate(rising_stocks[:10]):
+        print(f"{i+1}. {stock[0]}: {stock[1]:.2f}%")
+
+# スケジュールの設定
+schedule.every().day.at("15:30").do(print_rising_stocks)
+
+while True:
+    schedule.run_pending()
+    time.sleep(60)
