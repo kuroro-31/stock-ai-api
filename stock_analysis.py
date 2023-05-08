@@ -141,36 +141,7 @@ for symbol in stocks:
 # 上昇率が高い順に銘柄をソート
 rising_stocks = sorted(rising_stocks, key=lambda x: x[1], reverse=True)
 
-
-
-
-import schedule
-import time
-from datetime import datetime
-import pytz
-
-def is_weekday():
-    today = datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%A')
-    return today not in ['Saturday', 'Sunday']
-
-
-
-def print_rising_stocks():
-    rising_stocks = get_rising_stocks()
-    if rising_stocks:
-        print("上昇が期待される銘柄と上昇率:")
-        for i, stock in enumerate(rising_stocks[:10]):
-            print(f"{i+1}. {stock[0]}: {stock[1]:.2f}%")
-
-if __name__ == '__main__':
-    rising_stocks = get_rising_stocks()
-    print("上昇が期待される銘柄と上昇率:")
-    for i, stock in enumerate(rising_stocks[:10]):
-        print(f"{i+1}. {stock[0]}: {stock[1]:.2f}%")
-
-# スケジュールの設定
-schedule.every().day.at("15:30").do(print_rising_stocks)
-
-while True:
-    schedule.run_pending()
-    time.sleep(60)
+# 上昇が期待される銘柄と上昇率の上位10件を表示
+print("上昇が期待される銘柄と上昇率:")
+for i, stock in enumerate(rising_stocks[:10]):
+    print(f"{i+1}. {stock[0]}: {stock[1]:.2f}%")
