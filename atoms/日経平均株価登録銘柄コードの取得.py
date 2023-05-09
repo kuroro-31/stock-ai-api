@@ -1,4 +1,4 @@
-
+# スクレイピングで日経平均株価の登録銘柄コードを取得する
 import requests
 from bs4 import BeautifulSoup
 
