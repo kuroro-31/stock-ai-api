@@ -16,3 +16,7 @@ for row in table.find_all("tr"):
     if len(cells) > 0:
         ticker = cells[0].text.strip() + ".T"
         tickers.append(ticker)
+
+# 結果を表示
+for ticker in tickers:
+    print(ticker)
