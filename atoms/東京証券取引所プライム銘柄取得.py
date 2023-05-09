@@ -9,6 +9,7 @@ soup = BeautifulSoup(response.text, "html.parser")
 
 tickers = []
 
+
 table = soup.find("table", {"class": "sortable wikitable"})
 for row in table.find_all("tr"):
     cells = row.find_all("td")
