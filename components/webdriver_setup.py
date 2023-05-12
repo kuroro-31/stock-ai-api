@@ -7,6 +7,7 @@ def setup_driver():
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
+    options.binary_location = '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta' 
 
     # 環境変数からChromeとChromeDriverのパスを取得
     chrome_bin = os.environ.get("GOOGLE_CHROME_BIN")
