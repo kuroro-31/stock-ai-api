@@ -1,4 +1,5 @@
 from components.webdriver_setup import setup_driver
+from components.config import SBI_USERNAME, SBI_PASSWORD
 
 def main():
     driver = setup_driver()
