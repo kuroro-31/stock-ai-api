@@ -7,6 +7,9 @@ def main():
     # ブラウザの操作を行う
     driver.get('https://www.google.com')
     print(driver.title)
+    
+    print(SBI_USERNAME)
+    print(SBI_PASSWORD)
 
     driver.quit()
 
