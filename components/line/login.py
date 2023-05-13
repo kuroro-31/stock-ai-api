@@ -10,7 +10,12 @@ from components.config import LINE_USERNAME, LINE_PASSWORD
 
 
 def login_line(driver):
-    driver.get('https://access.line.me/oauth2/v2.1/login?returnUri=%2Foauth2%2Fv2.1%2Fauthorize%2Fconsent%3Fredirect_uri%3Dhttps%253A%252F%252Fsso.line-sec.co.jp%252Fauth%252Fline-login%252Fauthorize%253FssoState%253D0cc4d76c1bc91647f00f13a447340648c924bf0d7ec98a8638f90fbdc7529c8f%2526serviceId%253Db1af7520-c1a5-e0b1-c727-aa93891c41ac%2526redirectUrl%253Dhttps%25253A%25252F%25252Ftrade.line-sec.co.jp%25252F%26state%3D0cc4d76c1bc91647f00f13a447340648c924bf0d7ec98a8638f90fbdc7529c8f%26client_id%3D1655651234%26response_type%3Dcode%26scope%3Dprofile%2Bopenid%26max_age%3D3600&loginChannelId=1655651234&loginState=opHxTG2nkNMJP8FoNB6V2w#/')
+    driver.get('https://trade.line-sec.co.jp')
+
+    login_page = WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.XPATH, '//a[text()="ログイン"]'))
+    )
+    login_page.click()
 
     username_value = LINE_USERNAME
     password_value = LINE_PASSWORD

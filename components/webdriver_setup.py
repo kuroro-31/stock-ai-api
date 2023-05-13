@@ -15,6 +15,10 @@ def setup_driver():
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
 
+    # プロファイルパスを追加
+    options.add_argument(
+        "user-data-dir=/Users/st/Library/Application Support/Google/Chrome Beta/Default")
+
     # 環境変数からChromeとChromeDriverのパスを取得
     chrome_bin = os.getenv("GOOGLE_CHROME_BIN")
     chrome_driver_path = os.getenv("CHROMEDRIVER_PATH")
