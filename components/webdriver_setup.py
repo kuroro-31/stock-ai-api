@@ -23,7 +23,7 @@ def setup_driver():
     if chrome_bin is not None and APP_ENV == 'production':
         options.binary_location = chrome_bin
         options.add_argument('--headless')
-    elif APP_ENV == 'development':
+    elif APP_ENV == 'local':
         options.binary_location = '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta'
 
     if chrome_driver_path is not None:
