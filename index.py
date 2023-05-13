@@ -8,7 +8,7 @@ def main():
     driver = setup_driver()
 
     # login_sbi(driver)  # SBI証券にログイン
-    login_line(driver)  # SBI証券にログイン
+    login_line(driver)  # LINE証券にログイン
 
     # 開発中でない場合は、ドライバを終了する
     if APP_ENV != 'local':
