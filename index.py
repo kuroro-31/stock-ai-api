@@ -1,4 +1,8 @@
-# index.py
+#
+# --------------------------------------------------------------------------
+#  現物1株の自動売買スクリプト
+# --------------------------------------------------------------------------
+#
 from components.webdriver_setup import setup_driver
 from components.sbi.login import login_sbi
 from components.config import APP_ENV
