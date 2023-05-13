@@ -1,6 +1,7 @@
 from components.webdriver_setup import setup_driver
-# from components.sbi.login import login_sbi
+from components.sbi.login import login_sbi
 from components.line.login import login_line
+from components.au.login import login_au
 from components.config import APP_ENV
 
 
@@ -8,7 +9,8 @@ def main():
     driver = setup_driver()
 
     # login_sbi(driver)  # SBI証券にログイン
-    login_line(driver)  # LINE証券にログイン
+    # login_line(driver)  # LINE証券にログイン
+    login_au(driver)  # LINE証券にログイン
 
     # 開発中でない場合は、ドライバを終了する
     if APP_ENV != 'local':
