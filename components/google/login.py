@@ -3,10 +3,10 @@
 #  Googleにログインする
 # --------------------------------------------------------------------------
 #
+import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from components.config import GOOGLE_USERNAME, GOOGLE_PASSWORD
 
 
 def login_google(driver):
@@ -16,7 +16,7 @@ def login_google(driver):
     email_field = WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.ID, 'identifierId'))
     )
-    email_field.send_keys(GOOGLE_USERNAME)
+    email_field.send_keys(os.getenv('GOOGLE_USERNAME'))
 
     # 次へボタンをクリック
     next_button = WebDriverWait(driver, 20).until(
@@ -28,7 +28,7 @@ def login_google(driver):
     password_field = WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.NAME, 'password'))
     )
-    password_field.send_keys(GOOGLE_PASSWORD)
+    password_field.send_keys(os.getenv('GOOGLE_PASSWORD'))
 
     # 次へボタンをクリック
     next_button = WebDriverWait(driver, 20).until(

@@ -3,17 +3,17 @@
 #  auカブコム証券にログインする
 # --------------------------------------------------------------------------
 #
+import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from components.config import AU_USERNAME, AU_PASSWORD
 
 
 def login_au(driver):
     driver.get('https://s10.kabu.co.jp/_mem_bin/members/login.asp?/members/')
 
-    username_value = AU_USERNAME
-    password_value = AU_PASSWORD
+    username_value = os.getenv('AU_USERNAME')
+    password_value = os.getenv('AU_PASSWORD')
 
     # ユーザーネームを入力
     username = WebDriverWait(driver, 10).until(

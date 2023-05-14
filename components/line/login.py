@@ -3,10 +3,10 @@
 #  LINE証券にログインする
 # --------------------------------------------------------------------------
 #
+import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from components.config import LINE_USERNAME, LINE_PASSWORD
 
 
 def login_line(driver):
@@ -17,8 +17,8 @@ def login_line(driver):
     )
     login_page.click()
 
-    username_value = LINE_USERNAME
-    password_value = LINE_PASSWORD
+    username_value = os.getenv('LINE_USERNAME')
+    password_value = os.getenv('LINE_PASSWORD')
 
     # ユーザーネームを入力
     username = WebDriverWait(driver, 10).until(
