@@ -6,6 +6,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from components.notifications import send_message_to_slack, check_insufficient_buying_power_error
 
 
 # 新規注文ページへ遷移
@@ -79,3 +80,6 @@ def click_order_confirmation(driver):
         EC.element_to_be_clickable((By.XPATH, "//img[@alt='注文確認画面へ']"))
     )
     order_confirmation_button.click()
+    error_message = check_insufficient_buying_power_error(driver)
+    if error_message:
+        send_message_to_slack(error_message)
