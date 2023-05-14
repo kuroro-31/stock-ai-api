@@ -43,3 +43,15 @@ def check_insufficient_buying_power_error(driver):
         return error_message_element.text
     except TimeoutException:
         return None
+
+
+# 当該注文の不足金額 (例: 1,000円)
+def check_shortage_amount(driver):
+    try:
+        shortage_amount_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//td[@bgcolor='#ffffff' and @class='mtext-db']/div"))
+        )
+        return shortage_amount_element.text
+    except TimeoutException:
+        return None
