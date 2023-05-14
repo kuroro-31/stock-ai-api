@@ -3,17 +3,17 @@
 #  SBI証券にログインする
 # --------------------------------------------------------------------------
 #
-import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from components.config import SBI_USERNAME, SBI_PASSWORD
 
 
 def login_sbi(driver):
     driver.get('https://www.sbisec.co.jp/ETGate')
 
-    username_value = os.getenv('SBI_USERNAME')
-    password_value = os.getenv('SBI_PASSWORD')
+    username_value = SBI_USERNAME
+    password_value = SBI_PASSWORD
 
     # ユーザーネームを入力
     username = WebDriverWait(driver, 10).until(

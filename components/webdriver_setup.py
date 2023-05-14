@@ -3,9 +3,11 @@
 #  SeleniumとChromeDriverのセットアップ
 # --------------------------------------------------------------------------
 #
-import os
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from components.config import APP_ENV
+import os
 
 
 def setup_driver():
@@ -22,10 +24,10 @@ def setup_driver():
     chrome_driver_path = os.getenv("CHROMEDRIVER_PATH")
 
     # 環境変数が設定されている場合は、それを使用
-    if chrome_bin is not None and os.getenv('APP_ENV') == 'production':
+    if chrome_bin is not None and APP_ENV == 'production':
         options.binary_location = chrome_bin
         options.add_argument('--headless')
-    elif os.getenv('APP_ENV') == 'local':
+    elif APP_ENV == 'local':
         options.binary_location = '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta'
 
     if chrome_driver_path is not None:
