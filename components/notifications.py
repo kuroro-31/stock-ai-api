@@ -22,6 +22,17 @@ def send_message_to_slack(text):
     response.raise_for_status()
 
 
+def send_error_to_slack(text):
+    payload = {
+        'attachments': [{
+            'color': 'danger',  # Use 'danger' for red
+            'text': text,
+        }],
+    }
+    response = requests.post(SLACK_WEBHOOK_URL, json=payload)
+    response.raise_for_status()
+
+
 # 「買付余力が不足しております」
 def check_insufficient_buying_power_error(driver):
     try:
