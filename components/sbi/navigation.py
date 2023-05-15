@@ -40,7 +40,7 @@ def fill_form(driver):
         EC.presence_of_element_located((By.NAME, "stock_sec_code"))
     )
     stock_sec_code_field.clear()
-    stock_sec_code_field.send_keys("7203")
+    stock_sec_code_field.send_keys("9432")
 
     # '株数'に'1'を入力
     quantity_field = WebDriverWait(driver, 10).until(
@@ -85,3 +85,11 @@ def click_order_confirmation(driver):
     if error_message and shortage_amount:
         send_error_to_slack(error_message + "\n不足金額: " +
                             shortage_amount)  # エラーメッセージと不足金額を一緒に送信
+
+
+# 「注文発注」のクリック
+def click_order_place(driver):
+    order_place_button = WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//img[@alt='注文発注']"))
+    )
+    order_place_button.click()

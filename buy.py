@@ -7,7 +7,7 @@ import os
 from components.webdriver_setup import setup_driver
 from components.sbi.login import login_sbi
 from components.config import APP_ENV
-from components.sbi.navigation import navigate_to_transaction_page, navigate_to_fractional_shares_page, fill_form, agree_to_rules, input_password, click_order_confirmation
+from components.sbi.navigation import navigate_to_transaction_page, navigate_to_fractional_shares_page, fill_form, agree_to_rules, input_password, click_order_confirmation, click_order_place
 
 
 def main():
@@ -21,6 +21,7 @@ def main():
     agree_to_rules(driver)  # 「（S株）取引ルール（基準となる市場及び取引時間等）に同意する」にチェックを入れる
     input_password(driver, os.getenv('SBI_DEAL_PASSWORD'))  # 「取引パスワード」の入力
     click_order_confirmation(driver)  # 「注文確認画面へ」のクリック
+    click_order_place(driver)  # 「注文発注」のクリック
 
     # 開発中でない場合は、ドライバを終了する
     if os.getenv('APP_ENV') != 'local':
