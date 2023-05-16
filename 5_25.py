@@ -3,7 +3,7 @@ import datetime
 import requests
 import os
 
-from components.tickers import tickers
+from components.tickers import tickers  # 銘柄のリストをインポート
 
 os.environ['SLACK_WEBHOOK_URL'] = 'https://hooks.slack.com/services/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'
 
