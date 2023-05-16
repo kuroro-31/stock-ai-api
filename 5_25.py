@@ -3,6 +3,8 @@ import datetime
 import requests
 import os
 
+from components.tickers import tickers
+
 os.environ['SLACK_WEBHOOK_URL'] = 'https://hooks.slack.com/services/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'
 
 
@@ -48,6 +50,5 @@ def check_stock(ticker):
 
 
 if __name__ == "__main__":
-    tickers = ['4063.T', '7203.T', '9984.T']  # ここにチェックしたい銘柄をリストとして書きます
     for ticker in tickers:
         check_stock(ticker)
