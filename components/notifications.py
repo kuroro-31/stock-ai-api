@@ -11,9 +11,14 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 
-def send_message_to_slack(text):
+def send_message_to_slack(text, color='good'):
+    print('Trying to send message to Slack...')
+    print(f'Sending message to slack: {text}')
     payload = {
-        'text': text,
+        'attachments': [{
+            'color': color,
+            'text': text,
+        }],
     }
     response = requests.post(os.getenv('SLACK_WEBHOOK_URL'), json=payload)
     response.raise_for_status()

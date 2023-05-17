@@ -7,6 +7,8 @@ from components.webdriver_setup import setup_driver
 from components.sbi.bank.login import login_sbi_bank
 from components.tickers import tickers  # 銘柄のリストをインポート
 
+from components.notifications import send_message_to_slack
+
 from components.config import APP_ENV
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -28,18 +30,6 @@ def calculate_moving_averages(df):
     ma5 = df['Close'].rolling(window=5).mean()
     ma25 = df['Close'].rolling(window=25).mean()
     return ma5, ma25
-
-
-def send_message_to_slack(text):
-    print('Trying to send message to Slack...')
-    print(f'Sending message to slack: {text}')
-    payload = {
-        'attachments': [{
-            'text': text,
-        }],
-    }
-    response = requests.post(os.getenv('SLACK_WEBHOOK_URL'), json=payload)
-    response.raise_for_status()
 
 
 def check_portfolio(ticker):
@@ -91,16 +81,7 @@ def check_portfolio(ticker):
             if ticker in stock_code:
                 send_message_to_slack(f'【{ticker}】はポートフォリオにあります。')
                 return
-        send_message_to_slack(f'【{ticker}】はポートフォリオにありません。')
-
-        # 開発中でない場合は、ドライバを終了する
-        if os.getenv('APP_ENV') != 'local':
-            driver.quit()
-
-        # スクリプトが終了しないように、開発環境では無限ループを追加する
-        if os.getenv('APP_ENV') == 'local':
-            while True:
-                pass
+        send_message_to_slack(f'【{ticker}】はポートフォリオにありません。', 'danger')
 
     finally:
         driver.quit()
@@ -117,7 +98,7 @@ def check_stock(ticker):
             f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を上回りました。\n買いのタイミングです。')
     elif ma5.iloc[-1] < ma25.iloc[-1]:
         send_message_to_slack(
-            f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を下回りました。\n売りのタイミングです。')
+            f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を下回りました。\n売りのタイミングです。', 'danger')
     check_portfolio(ticker)
 
 
