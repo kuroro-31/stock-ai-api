@@ -19,6 +19,7 @@ from selenium.common.exceptions import TimeoutException
 os.environ['SLACK_WEBHOOK_URL'] = 'https://hooks.slack.com/services/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'
 
 
+# 株価を取得
 def get_stock_data(ticker):
     end = datetime.datetime.now()
     start = end - datetime.timedelta(days=60)
@@ -26,12 +27,14 @@ def get_stock_data(ticker):
     return df, end.strftime('%Y年%m月%d日')
 
 
+# 移動平均線を計算
 def calculate_moving_averages(df):
     ma5 = df['Close'].rolling(window=5).mean()
     ma25 = df['Close'].rolling(window=25).mean()
     return ma5, ma25
 
 
+# ポートフォリオに銘柄が含まれているかチェック
 def check_portfolio(ticker):
     driver = setup_driver()
 
@@ -98,6 +101,7 @@ def check_portfolio(ticker):
         driver.quit()
 
 
+# 株価をチェック
 def check_stock(ticker):
     df, latest_date = get_stock_data(ticker)
     ma5, ma25 = calculate_moving_averages(df)
