@@ -69,18 +69,29 @@ def check_portfolio(ticker):
         )
 
         # pタグのすぐ後にあるテーブルを取得する
+        driver.implicitly_wait(50)
         table = driver.find_element(
             By.XPATH, '//p[contains(text(), "■株式（現物／特定預り）")]/following-sibling::div/table')
 
         # テーブルの銘柄すべてを取得する
+        driver.implicitly_wait(50)
         rows = table.find_elements(By.XPATH, './/tbody/tr')
 
         # ポートフォリオに銘柄があるかどうかを確認し、Slackに通知する
         for row in rows:
-            stock_code = row.find_element(By.XPATH, './/th').text.split(' ')[0]
-            if ticker in stock_code:
+            stock_code_text = row.find_element(By.XPATH, './/th').text
+            stock_code_lines = stock_code_text.split('\n')  # 改行で分割
+            if not stock_code_lines:
+                continue
+            stock_code = stock_code_lines[0]  # 最初の行を銘柄コードとして取り出す
+            stock_code_with_suffix = stock_code + '.T'  # 銘柄コードに'.T'を追加
+            print(stock_code_with_suffix)
+
+            if ticker == stock_code_with_suffix:  # ここで比較
                 send_message_to_slack(f'【{ticker}】はポートフォリオにあります。')
                 return
+
+        # ループが終わってもreturnされなかった場合、銘柄はポートフォリオに存在しない
         send_message_to_slack(f'【{ticker}】はポートフォリオにありません。', 'danger')
 
     finally:
