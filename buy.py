@@ -19,7 +19,7 @@ def main():
     navigate_to_fractional_shares_page(driver)  # 「単元未満株」ページへ遷移
     fill_form(driver)  # 単元未満株のフォームを埋める
     agree_to_rules(driver)  # 「（S株）取引ルール（基準となる市場及び取引時間等）に同意する」にチェックを入れる
-    input_password(driver, os.getenv('SBI_DEAL_PASSWORD'))  # 「取引パスワード」の入力
+    input_password(driver, os.getenv('MY_PASSWORD'))  # 「取引パスワード」の入力
     click_order_confirmation(driver)  # 「注文確認画面へ」のクリック
     click_order_place(driver)  # 「注文発注」のクリック
 

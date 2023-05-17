@@ -18,7 +18,7 @@ def login_line(driver):
     login_page.click()
 
     username_value = os.getenv('LINE_USERNAME')
-    password_value = os.getenv('LINE_PASSWORD')
+    password_value = os.getenv('MY_PASSWORD')
 
     # ユーザーネームを入力
     username = WebDriverWait(driver, 10).until(

@@ -28,7 +28,7 @@ def login_google(driver):
     password_field = WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.NAME, 'password'))
     )
-    password_field.send_keys(os.getenv('GOOGLE_PASSWORD'))
+    password_field.send_keys(os.getenv('MY_PASSWORD'))
 
     # 次へボタンをクリック
     next_button = WebDriverWait(driver, 20).until(
