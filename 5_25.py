@@ -91,32 +91,38 @@ def check_portfolio(ticker):
             print(stock_code_with_suffix)
 
             if ticker == stock_code_with_suffix:  # ここで比較
-                send_message_to_slack(f'【{ticker}】はポートフォリオにあります。')
-                return
+                return True  # ポートフォリオに銘柄がある場合、Trueを返す
 
-        # ループが終わってもreturnされなかった場合、銘柄はポートフォリオに存在しない
-        send_message_to_slack(f'【{ticker}】はポートフォリオにありません。', 'danger')
+        return False  # ループが終わってもreturnされなかった場合、銘柄はポートフォリオに存在しないので、Falseを返す
+
+    except Exception as e:
+        print(
+            f'An error occurred while checking portfolio for {ticker}: {str(e)}')
+        return False
 
     finally:
         driver.quit()
 
 
-# 株価をチェック
-def check_stock(ticker):
-    df, latest_date = get_stock_data(ticker)
-    ma5, ma25 = calculate_moving_averages(df)
-
-    print(f'5-day MA: {ma5.iloc[-1]}, 25-day MA: {ma25.iloc[-1]}')
-
-    if ma5.iloc[-1] > ma25.iloc[-1]:
-        send_message_to_slack(
-            f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を上回りました。\n買いのタイミングです。')
-    elif ma5.iloc[-1] < ma25.iloc[-1]:
-        send_message_to_slack(
-            f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を下回りました。\n売りのタイミングです。', 'danger')
-    check_portfolio(ticker)
-
-
 if __name__ == "__main__":
+    # 各銘柄について株価の取得、移動平均の計算、ポートフォリオのチェックを一度に行う
     for ticker in tickers:
-        check_stock(ticker)
+        df, latest_date = get_stock_data(ticker)
+        ma5, ma25 = calculate_moving_averages(df)
+        in_portfolio = check_portfolio(ticker)
+
+        print(f'{ticker}')
+        print(f'5-day MA: {ma5.iloc[-1]}, 25-day MA: {ma25.iloc[-1]}')
+        print(f'Is in portfolio: {in_portfolio}')
+
+        if ma5.iloc[-1] > ma25.iloc[-1]:
+            if not in_portfolio:  # ポートフォリオに銘柄がない場合
+                send_message_to_slack(
+                    f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を上回りました。\n銘柄を買います。')
+            else:  # ポートフォリオに銘柄がある場合
+                send_message_to_slack(
+                    f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を上回りました。\n銘柄はすでに保持しています。')
+        elif ma5.iloc[-1] < ma25.iloc[-1]:
+            if in_portfolio:  # ポートフォリオに銘柄がある場合
+                send_message_to_slack(
+                    f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を下回りました。\n銘柄を売ります。', 'danger')
