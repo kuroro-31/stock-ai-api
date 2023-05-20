@@ -28,19 +28,19 @@ def navigate_to_fractional_shares_page(driver):
 
 
 # 単元未満株のフォームを埋める
-def fill_form(driver):
+def fill_form(driver, ticker):
     # '取引'を'現物買'に選択
     trade_radio_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, "genK"))
     )
     trade_radio_button.click()
 
-    # '銘柄コード'に'7203'を入力
     stock_sec_code_field = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.NAME, "stock_sec_code"))
     )
     stock_sec_code_field.clear()
-    stock_sec_code_field.send_keys("9432")
+    # '銘柄コード'に指定したtickerを入力
+    stock_sec_code_field.send_keys(ticker)
 
     # '株数'に'1'を入力
     quantity_field = WebDriverWait(driver, 10).until(
