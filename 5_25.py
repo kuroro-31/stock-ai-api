@@ -126,9 +126,6 @@ if __name__ == "__main__":
                 # 銘柄を購入する処理を追加します
                 buy_stock(ticker_without_t)
 
-                send_message_to_slack(
-                    f'{latest_date}\n【{ticker}】\n購入が完了しました。\n翌営業日から保有銘柄に追加されます。')
-
             else:  # ポートフォリオに銘柄がある場合
                 send_message_to_slack(
                     f'{latest_date}\n【{ticker}】\n5日移動平均が25日移動平均を上回りました。\n銘柄はすでに保持しています。')

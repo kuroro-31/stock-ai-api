@@ -89,7 +89,10 @@ def click_order_confirmation(driver):
 
 # 「注文発注」のクリック
 def click_order_place(driver):
-    order_place_button = WebDriverWait(driver, 30).until(
+    driver.implicitly_wait(50)
+    order_place_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//img[@alt='注文発注']"))
     )
     order_place_button.click()
+
+    send_message_to_slack('購入が完了しました。\n翌営業日から保有銘柄に追加されます。')
