@@ -28,7 +28,7 @@ def navigate_to_fractional_shares_page(driver):
 
 
 # 単元未満株のフォームを埋める
-def fill_form(driver, ticker):
+def fill_form(driver, ticker, purchase_number):
     # '取引'を'現物買'に選択
     trade_radio_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, "genK"))
@@ -47,7 +47,7 @@ def fill_form(driver, ticker):
         EC.presence_of_element_located((By.NAME, "input_quantity"))
     )
     quantity_field.clear()
-    quantity_field.send_keys("1")
+    quantity_field.send_keys(purchase_number)
 
     # '預り区分'を'特定預り'に選択
     deposit_radio_button = WebDriverWait(driver, 10).until(

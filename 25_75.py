@@ -33,9 +33,9 @@ def get_stock_data(ticker):
 
 # 移動平均線を計算
 def calculate_moving_averages(df):
-    ma5 = df['Close'].rolling(window=5).mean()
     ma25 = df['Close'].rolling(window=25).mean()
-    return ma5, ma25
+    ma75 = df['Close'].rolling(window=75).mean()
+    return ma25, ma75
 
 
 # ポートフォリオに銘柄が含まれているかチェック
@@ -112,28 +112,27 @@ if __name__ == "__main__":
     # 各銘柄について株価の取得、移動平均の計算、ポートフォリオのチェックを一度に行う
     for ticker in tickers:
         df, latest_date = get_stock_data(ticker)
-        ma5, ma25 = calculate_moving_averages(df)
+        ma25, ma75 = calculate_moving_averages(df)
         in_portfolio = check_portfolio(ticker)
 
         print(f'{ticker}')
-        print(f'5-day MA: {ma5.iloc[-1]}, 25-day MA: {ma25.iloc[-1]}')
+        print(f'25-day MA: {ma25.iloc[-1]}, 75-day MA: {ma75.iloc[-1]}')
         print(f'Is in portfolio: {in_portfolio}')
 
-        if ma5.iloc[-1] > ma25.iloc[-1]:
+        if ma25.iloc[-1] > ma75.iloc[-1]:
             if not in_portfolio:  # ポートフォリオに銘柄がない場合
                 send_message_to_slack(
                     f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n銘柄を買います。')
 
                 # 'ticker'から'.T'を削除
                 ticker_without_t = ticker.replace('.T', '')
-
                 # 銘柄を購入する処理を追加します
                 buy_stock(ticker_without_t, purchase_number)
 
             else:  # ポートフォリオに銘柄がある場合
                 send_message_to_slack(
                     f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n銘柄はすでに保持しています。')
-        elif ma5.iloc[-1] < ma25.iloc[-1]:
+        elif ma25.iloc[-1] < ma75.iloc[-1]:
             if in_portfolio:  # ポートフォリオに銘柄がある場合
                 send_message_to_slack(
                     f'{latest_date}\n【{ticker}】\n「売り」の判定です。\n銘柄を売ります。', 'danger')
