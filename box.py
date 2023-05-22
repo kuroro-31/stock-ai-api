@@ -1,17 +1,17 @@
 import yfinance as yf
 import datetime
 
+from components.tickers import tickers  # 銘柄のリストをインポート
+
+
 # 株価データを取得
-
-
 def get_stock_data(ticker, start_date, end_date):
     df = yf.download(ticker, start=start_date, end=end_date)
     return df
 
+
 # ボックス理論に基づいて売買の判断を行う関数
-
-
-def box_trading_strategy(df, box_range):
+def box_trading_strategy(df, box_range, ticker):
     # 初期化
     in_position = False
     buy_price = 0.0
@@ -30,32 +30,32 @@ def box_trading_strategy(df, box_range):
             if not in_position:
                 in_position = True
                 buy_price = close_price
-                trades.append(('Buy', df.index[i], buy_price))
+                trades.append((ticker, '「買い」', df.index[i], buy_price))
         elif close_price <= box_bottom[i]:
             if in_position:
                 in_position = False
                 sell_price = close_price
-                trades.append(('Sell', df.index[i], sell_price))
+                trades.append((ticker, '「売り」', df.index[i], sell_price))
 
     return trades
 
 
 if __name__ == "__main__":
-    # 株価データを取得
-    ticker = '9432.T'  # 銘柄コード
-    end_date = datetime.datetime.now()
-    start_date = end_date - datetime.timedelta(days=5*365)
+    for ticker in tickers:
+        # 株価データを取得
+        end_date = datetime.datetime.now()
+        start_date = end_date - datetime.timedelta(days=365)
 
-    df = get_stock_data(ticker, start_date, end_date)
+        df = get_stock_data(ticker, start_date, end_date)
 
-    # データの存在を確認
-    if df.empty:
-        print(f"No data found for {ticker}")
-    else:
-        # ボックス理論に基づいて売買の判断を行う
-        box_range = 20  # ボックスの期間
-        trades = box_trading_strategy(df, box_range)
+        # データの存在を確認
+        if df.empty:
+            print(f"No data found for {ticker}")
+        else:
+            # ボックス理論に基づいて売買の判断を行う
+            box_range = 20  # ボックスの期間
+            trades = box_trading_strategy(df, box_range, ticker)
 
-        # 売買の結果を表示
-        for trade in trades:
-            print(trade)
+            # 売買の結果を表示
+            for trade in trades:
+                print(trade)
