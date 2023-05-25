@@ -153,5 +153,6 @@ if __name__ == "__main__":
             send_message_to_slack(
                 f'{latest_date}\n【{ticker}】\n「売り」の判定です。', 'danger')
         else:
-            send_message_to_slack(
-                f'{latest_date}\n【{ticker}】\n「保持」の判定です。')  # 買いでも売りでもない場合にもメッセージを送信します。
+            print(f'{ticker} は「保持」の判定です。')
+            # send_message_to_slack(
+            #     f'{latest_date}\n【{ticker}】\n「保持」の判定です。')  # 買いでも売りでもない場合にもメッセージを送信します。
