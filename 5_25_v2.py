@@ -152,7 +152,7 @@ if __name__ == "__main__":
         elif ma5.iloc[-2] > ma25.iloc[-2] and ma5.iloc[-1] < ma25.iloc[-1]:
             send_message_to_slack(
                 f'{latest_date}\n【{ticker}】\n「売り」の判定です。', 'danger')
-        # else:
-            # print(f'{ticker} は「保持」の判定です。')
+        else:
+            print(f'{ticker} は「保持」の判定です。')
             # send_message_to_slack(
             #     f'{latest_date}\n【{ticker}】\n「保持」の判定です。')  # 買いでも売りでもない場合にもメッセージを送信します。
