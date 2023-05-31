@@ -17,7 +17,7 @@ from selenium.common.exceptions import TimeoutException
 
 from components.sbi.buy import main as buy_stock
 
-os.environ['SLACK_WEBHOOK_URL'] = 'https://hooks.slack.com/services/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'
+os.environ['SLACK_WEBHOOK_URL'] = 'https://hooks.slack.com/services/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'
 
 # 購入数
 purchase_number = 1
@@ -153,6 +153,6 @@ if __name__ == "__main__":
             send_message_to_slack(
                 f'{latest_date}\n【{ticker}】\n「売り」の判定です。', 'danger')
         else:
-            print(f'{ticker} は「保持」の判定です。')
+            print(f'{ticker} は「ホールド」の判定です。')
             # send_message_to_slack(
             #     f'{latest_date}\n【{ticker}】\n「保持」の判定です。')  # 買いでも売りでもない場合にもメッセージを送信します。
