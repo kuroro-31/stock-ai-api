@@ -28,7 +28,8 @@ def get_stock_data(ticker):
     end = datetime.datetime.now()
     start = end - datetime.timedelta(days=60)
     df = yf.download(ticker, start, end)
-    return df, end.strftime('%Y年%m月%d日')
+    latest_price = df.iloc[-1]['Close']  # 最新の終値を取得
+    return df, end.strftime('%Y年%m月%d日'), latest_price  # latest_priceを返り値に追加
 
 
 # 移動平均線を計算
@@ -121,7 +122,7 @@ def check_crossover(ma5, ma25):
 if __name__ == "__main__":
     # 各銘柄について株価の取得、移動平均の計算、ポートフォリオのチェックを一度に行う
     for ticker in tickers:
-        df, latest_date = get_stock_data(ticker)
+        df, latest_date, latest_price = get_stock_data(ticker)
         ma5, ma25 = calculate_moving_averages(df)
         # in_portfolio = check_portfolio(ticker)
 
@@ -131,8 +132,7 @@ if __name__ == "__main__":
 
         if ma5.iloc[-2] < ma25.iloc[-2] and ma5.iloc[-1] > ma25.iloc[-1]:
             send_message_to_slack(
-                f'{latest_date}\n【{ticker}】\n「買い」の判定です。')
-            # if not in_portfolio:  # ポートフォリオに銘柄がない場合
+                f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n最新の終値: {latest_price}円')            # if not in_portfolio:  # ポートフォリオに銘柄がない場合
             #     send_message_to_slack(
             #         f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n銘柄を買います。')
 
@@ -151,8 +151,7 @@ if __name__ == "__main__":
             #             f'{latest_date}\n【{ticker}】\n「売り」の判定です。\n銘柄を売ります。', 'danger')
         elif ma5.iloc[-2] > ma25.iloc[-2] and ma5.iloc[-1] < ma25.iloc[-1]:
             send_message_to_slack(
-                f'{latest_date}\n【{ticker}】\n「売り」の判定です。', 'danger')
-        # else:
+                f'{latest_date}\n【{ticker}】\n「売り」の判定です。\n最新の終値: {latest_price}円', 'danger')        # else:
         #     print(f'{ticker} は「ホールド」の判定です。')
             # send_message_to_slack(
             #     f'{latest_date}\n【{ticker}】\n「保持」の判定です。')  # 買いでも売りでもない場合にもメッセージを送信します。
