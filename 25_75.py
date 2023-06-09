@@ -17,7 +17,6 @@ from selenium.common.exceptions import TimeoutException
 
 from components.sbi.buy import main as buy_stock
 
-os.environ['SLACK_WEBHOOK_URL'] = 'https://hooks.slack.com/services/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'
 # 購入数
 purchase_number = 1
 
