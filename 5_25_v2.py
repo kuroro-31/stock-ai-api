@@ -130,8 +130,9 @@ if __name__ == "__main__":
         # print(f'Is in portfolio: {in_portfolio}')
 
         if ma5.iloc[-2] < ma25.iloc[-2] and ma5.iloc[-1] > ma25.iloc[-1]:
-            send_message_to_slack(
-                f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n最新の終値: {latest_price}円')            # if not in_portfolio:  # ポートフォリオに銘柄がない場合
+            print(f'{ticker} は「買い」の判定です。')
+            # send_message_to_slack(
+            #     f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n最新の終値: {latest_price}円')            # if not in_portfolio:  # ポートフォリオに銘柄がない場合
             #     send_message_to_slack(
             #         f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n銘柄を買います。')
 
@@ -149,8 +150,10 @@ if __name__ == "__main__":
             #         send_message_to_slack(
             #             f'{latest_date}\n【{ticker}】\n「売り」の判定です。\n銘柄を売ります。', 'danger')
         elif ma5.iloc[-2] > ma25.iloc[-2] and ma5.iloc[-1] < ma25.iloc[-1]:
-            send_message_to_slack(
-                f'{latest_date}\n【{ticker}】\n「売り」の判定です。\n最新の終値: {latest_price}円', 'danger')        # else:
-        #     print(f'{ticker} は「ホールド」の判定です。')
+            print(f'{ticker} は「売り」の判定です。')
+            # send_message_to_slack(
+            #     f'{latest_date}\n【{ticker}】\n「売り」の判定です。\n最新の終値: {latest_price}円', 'danger')
+        # else:
+            # print(f'{ticker} は「ホールド」の判定です。')
             # send_message_to_slack(
             #     f'{latest_date}\n【{ticker}】\n「保持」の判定です。')  # 買いでも売りでもない場合にもメッセージを送信します。
