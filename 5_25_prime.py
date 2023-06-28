@@ -5,7 +5,7 @@ import os
 
 from components.webdriver_setup import setup_driver
 from components.sbi.bank.login import login_sbi_bank
-from components.tickers import tickers  # 銘柄のリストをインポート
+from components.ticker_prime import tickers  # 銘柄のリストをインポート
 
 from components.notifications import send_message_to_slack
 
@@ -27,6 +27,9 @@ def get_stock_data(ticker):
     end = datetime.datetime.now()
     start = end - datetime.timedelta(days=60)
     df = yf.download(ticker, start, end)
+    if df.empty:  # Check if the dataframe is empty
+        print(f"No data for {ticker} from {start} to {end}")
+        return df, None, None
     latest_price = df.iloc[-1]['Close']  # 最新の終値を取得
     return df, end.strftime('%Y年%m月%d日'), latest_price  # latest_priceを返り値に追加
 
