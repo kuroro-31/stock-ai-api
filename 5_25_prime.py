@@ -3,6 +3,8 @@ import datetime
 import requests
 import os
 
+from tqdm import tqdm
+
 from components.webdriver_setup import setup_driver
 from components.sbi.bank.login import login_sbi_bank
 from components.ticker_prime import tickers  # 銘柄のリストをインポート
@@ -29,12 +31,16 @@ def get_stock_data(ticker):
     df = yf.download(ticker, start, end)
     if df.empty:  # Check if the dataframe is empty
         print(f"No data for {ticker} from {start} to {end}")
-        return df, None, None
-    latest_price = df.iloc[-1]['Close']  # 最新の終値を取得
-    return df, end.strftime('%Y年%m月%d日'), latest_price  # latest_priceを返り値に追加
-
+        return df, None, None, None
+    latest_price = df.iloc[-1]['Close']  # 終値を取得
+    ticker_data = yf.Ticker(ticker)
+    company_name = ticker_data.info['shortName']  # 会社名を取得
+    # latest_priceとcompany_nameを返り値に追加
+    return df, end.strftime('%Y年%m月%d日'), latest_price, company_name
 
 # 移動平均線を計算
+
+
 def calculate_moving_averages(df):
     ma5 = df['Close'].rolling(window=5).mean()
     ma25 = df['Close'].rolling(window=25).mean()
@@ -122,41 +128,25 @@ def check_crossover(ma5, ma25):
 
 
 if __name__ == "__main__":
-    # 各銘柄について株価の取得、移動平均の計算、ポートフォリオのチェックを一度に行う
-    for ticker in tickers:
-        df, latest_date, latest_price = get_stock_data(ticker)
-        ma5, ma25 = calculate_moving_averages(df)
-        # in_portfolio = check_portfolio(ticker)
+    buy_list = []
+    sell_list = []
 
-        # print(f'{ticker}')
-        # print(f'5-day MA: {ma5.iloc[-1]}, 25-day MA: {ma25.iloc[-1]}')
-        # print(f'Is in portfolio: {in_portfolio}')
+    for ticker in tqdm(tickers):
+        df, latest_date, latest_price, company_name = get_stock_data(ticker)
+        if df.empty:
+            print(f"No data for {ticker}")
+            continue
+
+        ma5, ma25 = calculate_moving_averages(df)
 
         if ma5.iloc[-2] < ma25.iloc[-2] and ma5.iloc[-1] > ma25.iloc[-1]:
-            print(f'{ticker} は「買い」の判定です。')
-            send_message_to_slack(
-                f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n最新の終値: {latest_price}円')            # if not in_portfolio:  # ポートフォリオに銘柄がない場合
-            #     send_message_to_slack(
-            #         f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n銘柄を買います。')
-
-            #     # 'ticker'から'.T'を削除
-            #     ticker_without_t = ticker.replace('.T', '')
-
-            #     # 銘柄を購入する処理を追加します
-            #     buy_stock(ticker_without_t, purchase_number)
-
-            # else:  # ポートフォリオに銘柄がある場合
-            #     send_message_to_slack(
-            #         f'{latest_date}\n【{ticker}】\n「買い」の判定です。\n銘柄はすでに保持しています。')
-            # elif ma5.iloc[-2] > ma25.iloc[-2] and ma5.iloc[-1] < ma25.iloc[-1]:
-            #     if in_portfolio:  # ポートフォリオに銘柄がある場合
-            #         send_message_to_slack(
-            #             f'{latest_date}\n【{ticker}】\n「売り」の判定です。\n銘柄を売ります。', 'danger')
+            buy_list.append(f'【{ticker}】{company_name} 終値: {latest_price}円')
         elif ma5.iloc[-2] > ma25.iloc[-2] and ma5.iloc[-1] < ma25.iloc[-1]:
-            print(f'{ticker} は「売り」の判定です。')
-            send_message_to_slack(
-                f'{latest_date}\n【{ticker}】\n「売り」の判定です。\n最新の終値: {latest_price}円', 'danger')
-        # else:
-            # print(f'{ticker} は「ホールド」の判定です。')
-            # send_message_to_slack(
-            #     f'{latest_date}\n【{ticker}】\n「保持」の判定です。')  # 買いでも売りでもない場合にもメッセージを送信します。
+            sell_list.append(f'【{ticker}】{company_name} 終値: {latest_price}円')
+
+    if buy_list:
+        buy_message = '「買い」\n' + '\n'.join(buy_list)
+        send_message_to_slack(buy_message)
+    if sell_list:
+        sell_message = '「売り」\n' + '\n'.join(sell_list)
+        send_message_to_slack(sell_message, 'danger')
