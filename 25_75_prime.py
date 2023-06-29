@@ -28,7 +28,7 @@ purchase_number = 1
 # 株価を取得
 def get_stock_data(ticker):
     end = datetime.datetime.now()
-    start = end - datetime.timedelta(days=60)
+    start = end - datetime.timedelta(days=90)  # ここを変更
     df = yf.download(ticker, start, end)
     if df.empty:  # Check if the dataframe is empty
         print(f"No data for {ticker} from {start} to {end}")
@@ -39,13 +39,12 @@ def get_stock_data(ticker):
     # latest_priceとcompany_nameを返り値に追加
     return df, end.strftime('%Y年%m月%d日'), latest_price, company_name
 
+
 # 移動平均線を計算
-
-
 def calculate_moving_averages(df):
-    ma5 = df['Close'].rolling(window=5).mean()
     ma25 = df['Close'].rolling(window=25).mean()
-    return ma5, ma25
+    ma75 = df['Close'].rolling(window=75).mean()
+    return ma25, ma75
 
 
 # ポートフォリオに銘柄が含まれているかチェック
@@ -119,10 +118,10 @@ def check_portfolio(ticker):
 
 
 # クロスオーバーの確認
-def check_crossover(ma5, ma25):
-    if ma5[-2] < ma25[-2] and ma5[-1] > ma25[-1]:
+def check_crossover(ma25, ma75):
+    if ma25[-2] < ma75[-2] and ma25[-1] > ma75[-1]:
         return 'buy'
-    elif ma5[-2] > ma25[-2] and ma5[-1] < ma25[-1]:
+    elif ma25[-2] > ma75[-2] and ma25[-1] < ma75[-1]:
         return 'sell'
     else:
         return 'hold'
@@ -132,7 +131,6 @@ if __name__ == "__main__":
     driver = setup_driver()
     buy_list = []
     sell_list = []
-    title = ""
 
     for ticker in tqdm(tickers):
         df, latest_date, latest_price, company_name = get_stock_data(ticker)
@@ -140,11 +138,11 @@ if __name__ == "__main__":
             print(f"No data for {ticker}")
             continue
 
-        ma5, ma25 = calculate_moving_averages(df)
+        ma25, ma75 = calculate_moving_averages(df)
 
-        if ma5.iloc[-2] < ma25.iloc[-2] and ma5.iloc[-1] > ma25.iloc[-1]:
+        if ma25.iloc[-2] < ma75.iloc[-2] and ma25[-1] > ma75[-1]:
             buy_list.append(f'【{ticker}】{company_name} 終値: {latest_price}円')
-        elif ma5.iloc[-2] > ma25.iloc[-2] and ma5.iloc[-1] < ma25.iloc[-1]:
+        elif ma25.iloc[-2] > ma75.iloc[-2] and ma25[-1] < ma75[-1]:
             sell_list.append(f'【{ticker}】{company_name} 終値: {latest_price}円')
 
     if buy_list:
@@ -154,7 +152,6 @@ if __name__ == "__main__":
         sell_message = '「売り」\n' + '\n'.join(sell_list)
         send_message_to_slack(sell_message, 'danger')
 
-    title = latest_date + ' 【短期】東証プライム 予測'
     login_supatrade(driver)
     new_post(driver)
-    new_post_send(driver, title, buy_message, sell_message)
+    new_post_send(driver, buy_message, sell_message)
