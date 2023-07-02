@@ -8,7 +8,7 @@ from components.supatrade.login import login_supatrade, new_post, new_post_send
 
 from components.webdriver_setup import setup_driver
 from components.sbi.bank.login import login_sbi_bank
-from components.ticker_prime import tickers  # 銘柄のリストをインポート
+from components.ticker_growth import tickers  # 銘柄のリストをインポート
 
 from components.notifications import send_message_to_slack
 
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         sell_message = '「売り」\n' + '\n'.join(sell_list)
         send_message_to_slack(sell_message, 'danger')
 
-    title = '【短期】東証プライム シグナル'
+    title = '【短期】東証グロース シグナル'
     login_supatrade(driver)
     new_post(driver)
     new_post_send(driver, title, buy_message, sell_message)

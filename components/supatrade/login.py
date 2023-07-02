@@ -3,6 +3,7 @@
 #  Supatradeにログインする
 # --------------------------------------------------------------------------
 #
+import time
 import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -41,8 +42,13 @@ def new_post(driver):
     go_newpost_page.click()
 
 
-def new_post_send(driver, title, buy_message, sell_message):
+def new_post_send(driver, post_title, buy_message, sell_message):
     driver.implicitly_wait(50)
+
+    # Check if both buy_message and sell_message are not empty
+    # if not buy_message and not sell_message:
+    #     print("Both buy_message and sell_message are empty. Nothing to post.")
+    #     return
 
     content_value = buy_message + "\n --------------------- \n" + sell_message
 
@@ -50,7 +56,7 @@ def new_post_send(driver, title, buy_message, sell_message):
     title = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "title"))
     )
-    title.send_keys(title)
+    title.send_keys(post_title)
 
     # パスワードを入力
     content = WebDriverWait(driver, 10).until(
@@ -62,5 +68,7 @@ def new_post_send(driver, title, buy_message, sell_message):
         EC.presence_of_element_located((By.ID, "submit_new_post"))
     )
     send.click()
+
+    time.sleep(5)  # Add a delay to ensure the form is submitted
 
     print("投稿完了")
