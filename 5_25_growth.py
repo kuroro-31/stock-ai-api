@@ -32,17 +32,15 @@ def get_stock_data(ticker):
     df = yf.download(ticker, start, end)
     if df.empty:  # Check if the dataframe is empty
         print(f"No data for {ticker} from {start} to {end}")
-        return df, None, None, None
+        return df, None, None
     latest_price = df.iloc[-1]['Close']  # 終値を取得
-    ticker_data = yf.Ticker(ticker)
-    company_name = ticker_data.info['shortName']  # 会社名を取得
-    # latest_priceとcompany_nameを返り値に追加
-    return df, end.strftime('%Y年%m月%d日'), latest_price, company_name
+    return df, end.strftime('%Y年%m月%d日'), latest_price
+
 
 # 移動平均線を計算
-
-
 def calculate_moving_averages(df):
+    if len(df) < 25:  # データが25未満の場合はNoneを返す
+        return None, None
     ma5 = df['Close'].rolling(window=5).mean()
     ma25 = df['Close'].rolling(window=25).mean()
     return ma5, ma25
@@ -120,9 +118,11 @@ def check_portfolio(ticker):
 
 # クロスオーバーの確認
 def check_crossover(ma5, ma25):
-    if ma5[-2] < ma25[-2] and ma5[-1] > ma25[-1]:
+    if len(ma5) < 2 or len(ma25) < 2:  # データが2つ未満の場合は'hold'を返す
+        return 'hold'
+    if ma5.iloc[-2] < ma25.iloc[-2] and ma5.iloc[-1] > ma25.iloc[-1]:
         return 'buy'
-    elif ma5[-2] > ma25[-2] and ma5[-1] < ma25[-1]:
+    elif ma5.iloc[-2] > ma25.iloc[-2] and ma5.iloc[-1] < ma25.iloc[-1]:
         return 'sell'
     else:
         return 'hold'
@@ -137,17 +137,20 @@ if __name__ == "__main__":
     sell_message = ""
 
     for ticker in tqdm(tickers):
-        df, date, latest_price, company_name = get_stock_data(ticker)
+        df, date, latest_price = get_stock_data(ticker)
         if df.empty:
             print(f"No data for {ticker}")
             continue
 
         ma5, ma25 = calculate_moving_averages(df)
+        if ma5 is None or ma25 is None:  # ma5またはma25がNoneの場合はスキップ
+            print(f"Not enough data for {ticker}")
+            continue
 
         if ma5.iloc[-2] < ma25.iloc[-2] and ma5.iloc[-1] > ma25.iloc[-1]:
-            buy_list.append(f'【{ticker}】{company_name} 終値: {latest_price}円')
+            buy_list.append(f'【{ticker}】 終値: {latest_price}円')
         elif ma5.iloc[-2] > ma25.iloc[-2] and ma5.iloc[-1] < ma25.iloc[-1]:
-            sell_list.append(f'【{ticker}】{company_name} 終値: {latest_price}円')
+            sell_list.append(f'【{ticker}】 終値: {latest_price}円')
 
     if buy_list:
         buy_message = '「買い」\n' + '\n'.join(buy_list)
